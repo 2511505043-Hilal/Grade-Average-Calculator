@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 public class Course {
@@ -40,7 +40,7 @@ public class Program {
             Console.WriteLine("5 - Statistics");
             Console.WriteLine("6 - Calculate GNO (AA / BA / BB / CB ...)");
             Console.WriteLine("7 - Calculate GPA (A / A- / B / B+ ...)");
-            Console.WriteLine("8 - Çıkış");
+            Console.WriteLine("8 - Exit");
             Console.WriteLine("------------------------------------------");
             Console.WriteLine("Note : You must add courses before calculating !!");
             Console.Write("Your Choice : ");
@@ -50,13 +50,13 @@ public class Program {
             {
                 case 1:
                     Console.Write("How many courses would you like to add : ");
-                    int numberr;
-                    while(!int.TryParse(Console.ReadLine() , out numberr))
+                    int number;
+                    while(!int.TryParse(Console.ReadLine() , out number))
                     {
                         Console.WriteLine("Please enter a number !!");
-                        Console.Write("How many courses would like to add : ");
+                        Console.Write("How many courses would you like to add : ");
                     }
-                    AddCourse(numberr);
+                    AddCourse(number);
                 break;
                 
                 case 2:
@@ -88,7 +88,7 @@ public class Program {
                 break;
                 
                 default:
-                Console.WriteLine("Please enter a number between 1 and 9 !!");
+                Console.WriteLine("Please enter a number between 1 and 8 !!");
                 break;
             }
             }
@@ -142,15 +142,15 @@ public class Program {
             Console.WriteLine("Select the letter grading system :");
             Console.WriteLine("1 - (AA / BA / BB ..)");
             Console.WriteLine("2 - (A / A- / B+ ..)");
-            Console.Write("Your Choise : ");
-            int choise1;
-            while(!int.TryParse(Console.ReadLine(), out choise1) || ( choise1 != 1 && choise1 != 2))
+            Console.Write("Your Choice : ");
+            int choice1;
+            while(!int.TryParse(Console.ReadLine(), out choice1) || ( choice1 != 1 && choice1 != 2))
             {
                 Console.WriteLine("Please choose 1 or 2 !!");
-                Console.Write("Your Choise : ");
+                Console.Write("Your Choice : ");
             }
             
-            if (choise1 == 1)
+            if (choice1 == 1)
             {
                 letter = GetOneLetter(average , final);
             }
@@ -322,6 +322,11 @@ public class Program {
     }
     public static void Statistics()
     {
+        if (courses.Count == 0)
+        {
+            Console.WriteLine("There are no courses to analyze !!");
+            return;
+        }
         int passed = 0;
         int failed = 0;
         double highest = 0;
@@ -365,38 +370,40 @@ public class Program {
         }
         
         double average = total / courses.Count;
-        double rate = (passed / (passed + failed)) * 100;
+        double rate = (double)passed / (passed + failed) * 100;
         Console.WriteLine("");
         Console.WriteLine("-------- Statistics --------");
         Console.WriteLine("Total Courses         : " + courses.Count);
         Console.WriteLine("Passed Courses        : " + passed);
         Console.WriteLine("Failed Courses        : " + failed);
-        Console.WriteLine("Success Rate          : %" + rate );
-        Console.WriteLine("Average Score         : " + average);
+        Console.WriteLine("Success Rate          : %" + rate.ToString("F2") );
+        Console.WriteLine("Average Score         : " + average.ToString("F2"));
         Console.WriteLine("Total Credits         : " + credit);
         Console.WriteLine("");
         Console.WriteLine("Highest Grade Course : " + name1);
-        Console.WriteLine("Average              : " + highest);
+        Console.WriteLine("Average              : " + highest.ToString("F2"));
         Console.WriteLine("Letter Grade         : " + letter1);
         Console.WriteLine("");
         Console.WriteLine("Lowest Grade Course  : " + name2);
-        Console.WriteLine("Average              : " + lowest);
+        Console.WriteLine("Average              : " + lowest.ToString("F2"));
         Console.WriteLine("Letter Grade         : " + letter2);
         Console.WriteLine("----------------------------");
     }
     public static void CalculateGNO()
     {
-        Console.Write("How many courses would you like to enter");
+        Console.Write("How many courses would you like to enter : ");
         int CourseCount;
-        while(!int.TryParse(Console.ReadLine(), out CourseCount) || CourseCount > 28)
+        while(!int.TryParse(Console.ReadLine(), out CourseCount) || CourseCount > 28 || CourseCount <= 0)
         {
             Console.WriteLine("Please enter a number !!");
-            Console.Write("How many courses would you like to enter");
+            Console.Write("How many courses would you like to enter : ");
         }
+        
         int credit = 0;
         string letter = "";
         int totalCredit = 0;
         double total = 0;
+        
         for (int i = 1; i <= CourseCount ; i++)
         {
             Console.WriteLine("Course " + i );
@@ -407,9 +414,16 @@ public class Program {
                 Console.Write("Letter Grade : ");
                 letter = Console.ReadLine();
             }while(string.IsNullOrWhiteSpace(letter));
-
+            
+            while (!GNO_LetterGrade.ContainsKey(letter))
+            {
+                Console.WriteLine("Invalid letter grade !!");
+                Console.Write("Letter Grade : ");
+                letter = Console.ReadLine();
+            }
+            
             Console.WriteLine("Credits : ");
-            while(!int.TryParse(Console.ReadLine(), out credit))
+            while(!int.TryParse(Console.ReadLine(), out credit) || credit <= 0)
             {
                 Console.WriteLine("Please enter a number !!");
             }
@@ -417,17 +431,18 @@ public class Program {
             totalCredit += credit;
             total += GNO_LetterGrade[letter] * credit;
         }
+        
         double gno = total / totalCredit;
         Console.WriteLine("Calculate GNO : " + gno.ToString("F2"));
     }  
     public static void CalculateGPA()
     {
-        Console.Write("How many courses would you like to enter");
+        Console.Write("How many courses would you like to enter : ");
         int CourseCount;
-        while(!int.TryParse(Console.ReadLine(), out CourseCount) || CourseCount > 28)
+        while(!int.TryParse(Console.ReadLine(), out CourseCount) || CourseCount > 28 || CourseCount <= 0)
         {
             Console.WriteLine("Please enter a number !!");
-            Console.Write("How many courses would you like to enter");
+            Console.Write("How many courses would you like to enter : ");
         }
         int credit = 0;
         string letter = "";
@@ -444,8 +459,15 @@ public class Program {
                 letter = Console.ReadLine();
             }while(string.IsNullOrWhiteSpace(letter));
 
+            while (!GPA_LetterGrade.ContainsKey(letter))
+            {
+                Console.WriteLine("Invalid letter grade !!");
+                Console.Write("Letter Grade : ");
+                letter = Console.ReadLine();
+            }
+
             Console.WriteLine("Credits : ");
-            while(!int.TryParse(Console.ReadLine(), out credit))
+            while(!int.TryParse(Console.ReadLine(), out credit) || credit <= 0)
             {
                 Console.WriteLine("Please enter a number !!");
             }
