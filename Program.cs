@@ -203,7 +203,7 @@ public class Program {
         if(average >= 57) return "C-";
         if(average >= 54) return "D+";
         if(average >= 51) return "D";
-        if(average == 50) return "D-";
+        if(average >= 50) return "D-";
 
         return "F";
     }
